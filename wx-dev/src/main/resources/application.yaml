@@ -1,0 +1,9 @@
+
+spring:
+  profiles:
+    active: @spring.profile.active@
+server:
+  servlet:
+    session:
+      timeout: 30m
+    context-path: /wx-dev

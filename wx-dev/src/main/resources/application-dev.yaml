@@ -1,0 +1,27 @@
+
+# 开发环境
+spring:
+  spring:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      database: 0
+      password:
+      lettuce:
+        pool:
+          max-wait: 1000
+          max-active: 10
+          max-idle: 8
+  mvc:
+    static-path-pattern: /static/**
+  freemarker:
+    cache: true
+
+
+# 微信相关配置
+wx:
+  token: wxtest
+  appID: wx329484839285ab5a
+  appsecret: 381f2a58c8006e31084e08aeb83fea51
+  host: http://7umfva.natappfree.cc/wx-dev
+

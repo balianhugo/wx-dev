@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.1.4.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>dev.gavin</groupId>
+	<artifactId>wx-dev</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>war</packaging>
+	<name>wx-dev</name>
+	<description>project for mbox </description>
+
+	<properties>
+		<java.version>1.7</java.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-freemarker</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-redis</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter-tomcat</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-tomcat</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.6</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>1.2.55</version>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>1.11</version>
+		</dependency>
+
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-pool2</artifactId>
+			<version>2.6.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<spring.profile.active>dev</spring.profile.active>
+				<compress.skip>true</compress.skip>
+			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>prd</id>
+			<properties>
+				<spring.profile.active>prd</spring.profile.active>
+				<compress.skip>false</compress.skip>
+			</properties>
+		</profile>
+	</profiles>
+
+	<build>
+		<resources>
+			<resource>
+				<directory>${project.basedir}/src/main/resources</directory>
+				<excludes>
+					<exclude>*.yaml</exclude>
+				</excludes>
+			</resource>
+			<resource>
+				<directory>${project.basedir}/src/main/resources</directory>
+				<filtering>true</filtering>
+				<includes>
+					<include>application-${spring.profile.active}.yaml</include>
+					<include>application.yaml</include>
+				</includes>
+			</resource>
+		</resources>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>net.alchim31.maven</groupId>
+				<artifactId>yuicompressor-maven-plugin</artifactId>
+				<version>1.5.1</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>compress</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<!-- 是否忽略执行 -->
+					<skip>${compress.skip}</skip>
+					<!-- 读取js,css文件采用UTF-8编码 -->
+					<encoding>UTF-8</encoding>
+					<!-- 是否显示可能的错误 -->
+					<jswarn>false</jswarn>
+					<!-- 若存在已压缩的文件，会先对比源文件是否有改动。有改动便压缩，无改动就不压缩 -->
+					<force>true</force>
+					<!-- 在指定的列号后插入新行 -1表示压缩成一行-->
+					<linebreakpos>-1</linebreakpos>
+					<!-- 压缩之前先执行聚合文件操作 -->
+					<preProcessAggregates>false</preProcessAggregates>
+					<!-- 压缩后是否保存文件后缀 -->
+					<nosuffix>true</nosuffix>
+					<!-- 压缩后加上后缀 -->
+					<suffix>.min</suffix>
+					<!-- 源目录，即需压缩的根目录 -->
+					 <sourceDirectory>${basedir}/src/main/resources</sourceDirectory>
+					<!-- 压缩js和css文件 -->
+					<includes>
+						<include>static/*.js</include>
+						<include>static/*.css</include>
+					</includes>
+					<!-- 以下目录和文件不会被压缩 -->
+					<excludes>
+						<exclude>**/*.min.js</exclude>
+						<exclude>**/*.min.css</exclude>
+					</excludes>
+					<!-- 压缩后输出文件目录 -->
+					<!-- <outputDirectory>${basedir}</outputDirectory> -->
+					<!-- 聚合文件 -->
+<!--					<aggregations>-->
+<!--						&lt;!&ndash; 聚合css文件 &ndash;&gt;-->
+<!--						<aggregation>-->
+<!--							&lt;!&ndash; 合并每一个文件后插入一新行 &ndash;&gt;-->
+<!--							<insertNewLine>false</insertNewLine>-->
+<!--							&lt;!&ndash; 聚合后是否删除引入文件 &ndash;&gt;-->
+<!--							<removeIncluded>false</removeIncluded>-->
+<!--							&lt;!&ndash; 需合并文件的根文件夹 &ndash;&gt;-->
+<!--							<inputDir>${project.build.directory}/${project.build.finalName}/css</inputDir>-->
+<!--							&lt;!&ndash; 最终合并的输出文件 &ndash;&gt;-->
+<!--							<output>${project.build.directory}/${project.build.finalName}/css/all.min.css</output>-->
+<!--							&lt;!&ndash; 把以下文件合并成一个文件，是按顺序合并的 &ndash;&gt;-->
+<!--							<includes>-->
+<!--								<include>*.css</include>-->
+<!--							</includes>-->
+<!--						</aggregation>-->
+<!--						&lt;!&ndash; 聚合js文件 &ndash;&gt;-->
+<!--						<aggregation>-->
+<!--							&lt;!&ndash; 合并每一个文件后插入一新行 &ndash;&gt;-->
+<!--							<insertNewLine>false</insertNewLine>-->
+<!--							&lt;!&ndash; 聚合后是否删除引入文件 &ndash;&gt;-->
+<!--							<removeIncluded>false</removeIncluded>-->
+<!--							&lt;!&ndash; 需合并文件的根文件夹 &ndash;&gt;-->
+<!--							<inputDir>${project.build.directory}/${project.build.finalName}/js</inputDir>-->
+<!--							&lt;!&ndash; 最终合并的输出文件 &ndash;&gt;-->
+<!--							<output>${project.build.directory}/${project.build.finalName}/js/all.min.js</output>-->
+<!--							&lt;!&ndash; 把以下文件合并成一个文件，是按顺序合并的 &ndash;&gt;-->
+<!--							<includes>-->
+<!--								<include>*.js</include>-->
+<!--							</includes>-->
+<!--						</aggregation>-->
+<!--					</aggregations>-->
+				</configuration>
+			</plugin>
+		</plugins>
+		<finalName>${project.name}</finalName>
+	</build>
+
+</project>
